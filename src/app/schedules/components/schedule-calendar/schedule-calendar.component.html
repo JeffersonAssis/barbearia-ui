@@ -1,0 +1,87 @@
+<div class="container">
+  <div class="row">
+
+      <div class="col-12">
+          <form #form="ngForm" (ngSubmit)="onSubmit(form)" class="container">
+              <div class="row">
+                  <div class="col-4">
+                      <mat-form-field>
+                          <mat-label>Inicio</mat-label>
+                          <input matInput [matTimepicker]="startAtPicker" [ngModelOptions]="{updateOn: 'blur'}"
+                              name="inicio" id="inicio" #startAtModel="ngModel"
+                              (ngModelChange)="onTimeChange($event)" [(ngModel)]="newSchedule.inicio" required>
+                          <mat-timepicker #startAtPicker />
+                          <mat-timepicker-toggle [for]="startAtPicker" matSuffix />
+                      </mat-form-field>
+                  </div>
+                  <div class="col-4">
+                      <mat-form-field>
+                          <mat-label>Término</mat-label>
+                          <input matInput [matTimepicker]="endAtPicker" [ngModelOptions]="{updateOn: 'blur'}"
+                              name="fim" id="fim" #fimModel="ngModel" [(ngModel)]="newSchedule.fim"
+                              disabled="true">
+                          <mat-timepicker #endAtPicker />
+                          <mat-timepicker-toggle [for]="endAtPicker" matSuffix />
+                      </mat-form-field>
+                  </div>
+                  <div class="col-3">
+                      <mat-form-field>
+                          <mat-label>Selecione o cliente</mat-label>
+                          <mat-select name="clienteid" id="clienteid" #clientIdModel="ngModel"
+                              [(ngModel)]="newSchedule.clienteId" required>
+                              <mat-option *ngFor="let client of clients" [value]="client.id">
+                                  {{client.nome}}
+                              </mat-option>
+                          </mat-select>
+                      </mat-form-field>
+                  </div>
+                  <div class="col-1">
+                      <button type="submit" mat-mini-fab extended matTooltip="incluir agendamento no dia"
+                          [disabled]="form.invalid">
+                          <mat-icon>add</mat-icon>
+                      </button>
+                  </div>
+              </div>
+          </form>
+      </div>
+  </div>
+  <div class="row">
+      <div class="col-6">
+          <mat-card class="calendar-card">
+              <mat-calendar [(selected)]="selected"></mat-calendar>
+          </mat-card>
+      </div>
+      <div class="col-6">
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+              <ng-container matColumnDef="inicio">
+                  <th mat-header-cell *matHeaderCellDef>Inicio</th>
+                  <td mat-cell *matCellDef="let schedule">{{schedule.inicio | date:'HH:mm'}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="fim">
+                  <th mat-header-cell *matHeaderCellDef>Término</th>
+                  <td mat-cell *matCellDef="let schedule">{{schedule.fim | date:'HH:mm'}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="clients">
+                  <th mat-header-cell *matHeaderCellDef>Cliente</th>
+                  <td mat-cell *matCellDef="let schedule">{{schedule.clienteNome}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>Ações</th>
+                  <td mat-cell *matCellDef="let schedule">
+                      <button mat-mini-fab extended matTooltip="excluir" (click)="requestDelete(schedule)">
+                          <mat-icon>delete</mat-icon>
+                      </button>
+                  </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+          <mat-paginator [pageSizeOptions]="[3, 6, 9]" showFirstLastButton></mat-paginator>
+      </div>
+  </div>
+</div>
